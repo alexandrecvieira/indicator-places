@@ -51,12 +51,12 @@ class IndicatorPlaces:
         if path.startswith("smb") or path.startswith("ssh") or path.startswith("ftp") or path.startswith("network"):
             icon_name = "folder-remote"    
         else:
-            f = gio.File(path)
+            f = gio.File.new_for_uri(path)
             try:   
-                info = f.query_info(gio.FILE_ATTRIBUTE_STANDARD_ICON)
+                info = f.query_info(gio.FILE_ATTRIBUTE_STANDARD_ICON, 0, None)
                 icon = info.get_icon()
                 icon_name = icon.get_names()[0] if icon.get_names()[0] != '(null)' else 'folder'
-            except (gio.Error, NameError):
+            except (NameError):
                 icon_name = "folder"
         
         return icon_name
@@ -100,14 +100,12 @@ class IndicatorPlaces:
         for bm in bookmarks:
             path, label = bm.strip().partition(' ')[::2]
 
-            print path
-            
             if not label:
                 label = os.path.basename(os.path.normpath(path))
 
             label = urllib.unquote(label)
-            # item = self.create_menu_item(label, self.get_bookmark_icon(path))
-            # item.connect("activate", self.on_bookmark_click, path)
+            item = self.create_menu_item(label, self.get_bookmark_icon(path))
+            item.connect("activate", self.on_bookmark_click, path)
 
             # Append the item to menu
             menu.append(item)
