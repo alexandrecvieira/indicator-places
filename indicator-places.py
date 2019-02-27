@@ -25,10 +25,16 @@ import subprocess
 import urllib
 
 APP_NAME = 'indicator-places'
-APP_VERSION = '0.5'
+APP_VERSION = '1.0'
 
 class IndicatorPlaces:
+
+    LEGACY_BOOKMARKS_PATH = os.getenv('HOME') + '/.gtk-bookmarks'
     BOOKMARKS_PATH = os.getenv('HOME') + '/.config/gtk-3.0/bookmarks'
+
+    FM = gio.app_info_get_default_for_type("inode/directory", True).get_executable()
+
+    # print FM # for debug
 
     def __init__(self):
         self.ind = AppIndicator.Indicator.new("places", gtk.STOCK_HOME, AppIndicator.IndicatorCategory.APPLICATION_STATUS)
@@ -60,13 +66,23 @@ class IndicatorPlaces:
                 icon_name = "folder"
         
         return icon_name
+
+    def find_trash(self):
+        home = os.getenv('HOME') + "/"
+        for dirpath, dirnames, filenames in os.walk(home):
+            for dirname in dirnames:
+                if dirname.find("Trash") == 0 or dirname.find("trash") == 0:
+                    dirname = os.path.join(dirpath, dirname)
+                    return dirname
     
     # This methind creates a menu
     def update_menu(self, widget = None, data = None):
         try:
+            bookmarks = open(self.LEGACY_BOOKMARKS_PATH).readlines()
+        except IOError:
             bookmarks = open(self.BOOKMARKS_PATH).readlines()
         except IOError:
-            bookmarks = []        
+            bookmarks = []
 
         # Create menu
         menu = gtk.Menu()
@@ -88,6 +104,9 @@ class IndicatorPlaces:
         menu.append(item)
 
         # Trash
+        trash = gio.File.new_for_path(self.find_trash())
+        trash_items = trash.query_info(gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT, gio.FILE_QUERY_INFO_NONE, None).get_attribute_uint32(gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT)
+        print trash_items # for debug
         item = self.create_menu_item("Trash", "user-trash")
         item.connect("activate", self.on_bookmark_click, 'trash:')
         menu.append(item)
@@ -124,8 +143,8 @@ class IndicatorPlaces:
 
     # Open clicked bookmark
     def on_bookmark_click(self, widget, path):
-        #subprocess.Popen('/usr/bin/nautilus %s' % path, shell = True)
-        subprocess.Popen('/usr/bin/xdg-open %s' % path, shell = True)
+        # subprocess.Popen('/usr/bin/nautilus %s' % path, shell = True)
+        subprocess.Popen(self.FM + ' %s' % path, shell = True)
 
         
     def on_bookmarks_changed(self, filemonitor, file, other_file, event_type):
