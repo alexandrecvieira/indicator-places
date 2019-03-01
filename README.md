@@ -1,4 +1,4 @@
-# indicator-places
+# Simples indicador que mostra as pastas da Home e pastas favoritas
 
 Very simple app-indicator, shows gtk-bookmarks (aka places)
 
