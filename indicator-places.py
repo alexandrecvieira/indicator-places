@@ -12,7 +12,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gio, GLib
 from gi.repository import AppIndicator3 as AppIndicator
 
 import os
@@ -77,18 +77,39 @@ class IndicatorPlaces:
         self.ind.set_menu(menu)
 
         # Home folder menu item
-        item = self.create_menu_item("Home Folder", "user-home") 
+        item = self.create_menu_item("Home Folder", "user-home")
         item.connect("activate", self.on_bookmark_click, os.getenv('HOME'))
         menu.append(item)
 
-        # Computer menu item
-        item = self.create_menu_item("Computer", "computer" )
-        item.connect("activate", self.on_bookmark_click, 'computer:')
+        # Desktop folder menu item
+        item = self.create_menu_item("Desktop", "desktop")
+        path = str(GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP)).replace(' ', '\\ ')
+        item.connect("activate", self.on_bookmark_click, path)
         menu.append(item)
 
-        # Computer menu item
-        item = self.create_menu_item("Network", "network-workgroup")
-        item.connect("activate", self.on_bookmark_click, 'network:')
+        # Documents folder menu item
+        item = self.create_menu_item("Documents", "folder-documents")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS))
+        menu.append(item)
+
+        # Music folder menu item
+        item = self.create_menu_item("Music", "folder-music")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC))
+        menu.append(item)
+
+        # Pictures folder menu item
+        item = self.create_menu_item("Pictures", "folder-pictures")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES))
+        menu.append(item)
+
+        # Videos folder menu item
+        item = self.create_menu_item("Videos", "folder-video")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS))
+        menu.append(item)
+
+        # Downloads folder menu item
+        item = self.create_menu_item("Downloads", "folder-download")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
         menu.append(item)
 
         # Trash
@@ -104,6 +125,20 @@ class IndicatorPlaces:
             item.set_image(image)
             
         item.connect("activate", self.on_bookmark_click, 'trash:')
+        menu.append(item)
+
+        # Show separator
+        item = Gtk.SeparatorMenuItem()
+        menu.append(item)
+
+        # Computer menu item
+        item = self.create_menu_item("Computer", "computer" )
+        item.connect("activate", self.on_bookmark_click, 'computer:')
+        menu.append(item)
+
+        # Computer menu item
+        item = self.create_menu_item("Network", "network-workgroup")
+        item.connect("activate", self.on_bookmark_click, 'network:')
         menu.append(item)
 
         # Show separator
