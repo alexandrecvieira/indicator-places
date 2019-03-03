@@ -92,9 +92,9 @@ class IndicatorPlaces:
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS))
         menu.append(item)
 
-        # Music folder menu item
-        item = self.create_menu_item("Music", "folder-music")
-        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC))
+        # Downloads folder menu item
+        item = self.create_menu_item("Downloads", "folder-download")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
         menu.append(item)
 
         # Pictures folder menu item
@@ -102,29 +102,38 @@ class IndicatorPlaces:
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES))
         menu.append(item)
 
+        # Music folder menu item
+        item = self.create_menu_item("Music", "folder-music")
+        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC))
+        menu.append(item)
+
         # Videos folder menu item
         item = self.create_menu_item("Videos", "folder-video")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS))
         menu.append(item)
 
-        # Downloads folder menu item
-        item = self.create_menu_item("Downloads", "folder-download")
-        item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
-        menu.append(item)
-
         # Trash
         trash = Gio.File.new_for_uri("trash:")
+        item = self.create_menu_item("Trash", "user-trash")
+
+        # Trash submenu
+        trash_menu = Gtk.Menu()
+        item.set_submenu(trash_menu)
+        open_trash_menu =  self.create_menu_item("Open Trash", "document-open")
+        trash_menu.append(open_trash_menu);            
+        open_trash_menu.connect("activate", self.on_bookmark_click, 'trash:')
+        empty_trash_menu = self.create_menu_item("Empty Trash", None)
+        trash_menu.append(empty_trash_menu)
+        empty_trash_menu.connect("activate", self.empty_trash)
+
         trash_items = trash.query_info(Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
                                        Gio.FileQueryInfoFlags.NONE, None).get_attribute_uint32(
                                            Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT)
-        item = self.create_menu_item("Trash", "user-trash")
-
         if trash_items > 0:
             image = Gtk.Image()
             image.set_from_icon_name("user-trash-full", 24)
             item.set_image(image)
-            
-        item.connect("activate", self.on_bookmark_click, 'trash:')
+                
         menu.append(item)
 
         # Show separator
@@ -168,22 +177,16 @@ class IndicatorPlaces:
         
     def on_bookmarks_changed(self, filemonitor, file, other_file, event_type):
         if event_type == Gio.FileMonitorEvent.CHANGES_DONE_HINT:
-            print ('Bookmarks changed, updating menu...')
+            # print ('Bookmarks changed, updating menu...')
             self.update_menu()
 
-    def on_update_menu(self, filemonitor, file, other_file, event_type):
+    def on_trash_changed(self, filemonitor, file, other_file, event_type):
         if event_type == Gio.FileMonitorEvent.CHANGES_DONE_HINT or Gio.FileMonitorEvent.DELETED:
-            print ('Trash changed, updating menu...')
+            # print ('Trash changed, updating menu...')
             self.update_menu()
-
             
-    def find_trash(self):
-        home = os.getenv('HOME')
-        for dirpath, dirnames, filenames in os.walk(home):
-            for dirname in dirnames:
-                if dirname.find("Trash") == 0 or dirname.find("trash") == 0:
-                    dirname = os.path.join(dirpath, dirname) + "/files"
-                    return dirname
+    def empty_trash(self, widget):
+        os.system("gio trash --empty")
 
 if __name__ == "__main__":
     # Run the indicator
@@ -199,10 +202,9 @@ if __name__ == "__main__":
     monitor.connect("changed", i.on_bookmarks_changed)
 
     # Monitor Trash changes
-    trash_path = i.find_trash()
-    trash = Gio.File.new_for_path(trash_path)
-    t_monitor = trash.monitor_directory(Gio.FileMonitorFlags.NONE, None)
-    t_monitor.connect("changed", i.on_update_menu)
+    trash_folder = Gio.File.new_for_uri("trash:")
+    t_monitor = trash_folder.monitor_directory(Gio.FileMonitorFlags.NONE, None)
+    t_monitor.connect("changed", i.on_trash_changed)
     
     # Main gtk loop
     Gtk.main()
