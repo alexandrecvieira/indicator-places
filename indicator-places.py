@@ -125,7 +125,7 @@ class IndicatorPlaces:
         empty_trash_menu = self.create_menu_item("Empty Trash", None)
         trash_menu.append(empty_trash_menu)
         empty_trash_menu.connect("activate", self.empty_trash)
-
+        
         trash_items = trash.query_info(Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
                                        Gio.FileQueryInfoFlags.NONE, None).get_attribute_uint32(
                                            Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT)
@@ -133,7 +133,10 @@ class IndicatorPlaces:
             image = Gtk.Image()
             image.set_from_icon_name("user-trash-full", 24)
             item.set_image(image)
-                
+            empty_trash_menu.set_sensitive(True);
+        else:
+            empty_trash_menu.set_sensitive(False);
+            
         menu.append(item)
 
         # Show separator
