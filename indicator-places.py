@@ -84,19 +84,7 @@ class IndicatorPlaces:
         
         return icon_name
 
-    # This methind creates a menu
-    def update_menu(self, widget = None, data = None):
-        try:
-            bookmarks = open(self.LEGACY_BOOKMARKS_PATH).readlines()
-        except IOError:
-            bookmarks = open(self.BOOKMARKS_PATH).readlines()
-        except IOError:
-            bookmarks = []
-
-        # Create menu
-        menu = Gtk.Menu()
-        self.ind.set_menu(menu)
-
+    def create_default_home_items(self, menu):
         # Home folder menu item
         item = self.create_menu_item("Home Folder", "user-home")
         item.connect("activate", self.on_bookmark_click, os.getenv('HOME'))
@@ -133,6 +121,79 @@ class IndicatorPlaces:
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS))
         menu.append(item)
 
+    def create_bookmark_items(self, menu):
+        try:
+            bookmarks = open(self.LEGACY_BOOKMARKS_PATH).readlines()
+        except IOError:
+            bookmarks = open(self.BOOKMARKS_PATH).readlines()
+        except IOError:
+            bookmarks = []
+        # Populate bookmarks menu items
+        counter = 0
+        for bm in bookmarks:
+            counter += 1
+            if counter == 1:
+                # Show separator
+                item = Gtk.SeparatorMenuItem()
+                menu.append(item)
+
+            path, label = bm.strip().partition(' ')[::2]
+            if not label:
+                label = os.path.basename(os.path.normpath(path))
+
+            label = unquote(label)
+            item = self.create_menu_item(label, self.get_bookmark_icon(path))
+            item.connect("activate", self.on_bookmark_click, path)
+
+            # Append the item to menu
+            menu.append(item)
+
+    def create_removible_media_items(self, menu):
+        # Mounts
+        connected_drives = self.volume_monitor.get_connected_drives()
+        mounts = self.volume_monitor.get_mounts()
+        counter = 0
+        mounts_list = []
+        for drive in connected_drives:
+            for volume in drive.get_volumes():
+                if volume.can_eject or volume.can_mount:
+                    counter += 1
+                    if counter == 1:
+                        # Show separator
+                        item = Gtk.SeparatorMenuItem()
+                        menu.append(item)
+                    vol_name = volume.get_name()
+                    item = self.create_menu_item(vol_name, self._get_icon_name_from_gicon(volume.get_icon()))
+                    menu.append(item)
+                    # Open submenu
+                    submenu = Gtk.Menu()
+                    item.set_submenu(submenu)
+                    open_menu =  self.create_menu_item("Open", "document-open")
+                    open_menu.connect('activate', self.on_removible_media_click, volume)
+                    submenu.append(open_menu)
+                    mounts_list.append(vol_name)
+
+        # Remote mounts, fuse folders ...
+        for mount in mounts:
+            if mount.can_unmount:
+                if not (mount.get_name() in mounts_list):
+                    counter += 1
+                    if counter == 1:
+                        # Show separator
+                        item = Gtk.SeparatorMenuItem()
+                        menu.append(item)
+                    item = self.create_menu_item(mount.get_name(), self._get_icon_name_from_gicon(mount.get_icon()))
+                    item.connect('activate', self.on_bookmark_click, mount.get_root().get_path())
+                    menu.append(item)
+
+    # This methind creates a menu
+    def update_menu(self, widget = None, data = None):
+        # Create menu
+        menu = Gtk.Menu()
+        self.ind.set_menu(menu)
+
+        self.create_default_home_items(menu)
+
         # Trash
         trash = Gio.File.new_for_uri("trash:")
         item = self.create_menu_item("Trash", "user-trash")
@@ -162,61 +223,9 @@ class IndicatorPlaces:
         item.connect("activate", self.on_bookmark_click, 'network:')
         menu.append(item)
 
-        # Populate bookmarks menu items
-        counter = 0
-        for bm in bookmarks:
-            counter += 1
-            if counter == 1:
-                # Show separator
-                item = Gtk.SeparatorMenuItem()
-                menu.append(item)
-            path, label = bm.strip().partition(' ')[::2]
+        self.create_bookmark_items(menu)
 
-            if not label:
-                label = os.path.basename(os.path.normpath(path))
-
-            label = unquote(label)
-            item = self.create_menu_item(label, self.get_bookmark_icon(path))
-            item.connect("activate", self.on_bookmark_click, path)
-
-            # Append the item to menu
-            menu.append(item)
-
-        # Mounts
-        connected_drives = self.volume_monitor.get_connected_drives()
-        mounts = self.volume_monitor.get_mounts()
-        counter = 0
-        mounts_list = []
-        for drive in connected_drives:
-            for volume in drive.get_volumes():
-                if volume.can_eject or volume.can_mount:
-                    counter += 1
-                    if counter == 1:
-                        # Show separator
-                        item = Gtk.SeparatorMenuItem()
-                        menu.append(item)
-                    vol_name = volume.get_name()
-                    item = self.create_menu_item(vol_name, self._get_icon_name_from_gicon(volume.get_icon()))
-                    menu.append(item)
-                    # Open submenu
-                    submenu = Gtk.Menu()
-                    item.set_submenu(submenu)
-                    open_menu =  self.create_menu_item("Open", "document-open")
-                    open_menu.connect('activate', self.on_removible_media_click, volume)
-                    submenu.append(open_menu)
-                    mounts_list.append(vol_name)
-                    
-        for mount in mounts:
-            if mount.can_unmount:
-                if not (mount.get_name() in mounts_list):
-                    counter += 1
-                    if counter == 1:
-                        # Show separator
-                        item = Gtk.SeparatorMenuItem()
-                        menu.append(item)
-                    item = self.create_menu_item(mount.get_name(), self._get_icon_name_from_gicon(mount.get_icon()))
-                    item.connect('activate', self.on_bookmark_click, mount.get_root().get_path())
-                    menu.append(item)
+        self.create_removible_media_items(menu)
                  
         # Show the menu
         menu.show_all()
