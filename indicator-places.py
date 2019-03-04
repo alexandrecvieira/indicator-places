@@ -38,9 +38,14 @@ class IndicatorPlaces:
 
         self.volume_monitor = Gio.VolumeMonitor.get()
         self.volume_monitor.connect('drive-connected', self.update_menu)
+        self.volume_monitor.connect('drive-changed', self.update_menu)
         self.volume_monitor.connect('drive-disconnected', self.update_menu)
         self.volume_monitor.connect('mount-added', self.update_menu)
+        self.volume_monitor.connect('mount-changed', self.update_menu)
         self.volume_monitor.connect('mount-removed', self.update_menu)
+        self.volume_monitor.connect('volume-added', self.update_menu)
+        self.volume_monitor.connect('volume-changed', self.update_menu)
+        self.volume_monitor.connect('volume-removed', self.update_menu)
 
         self.update_menu()
 
@@ -131,16 +136,7 @@ class IndicatorPlaces:
         # Trash
         trash = Gio.File.new_for_uri("trash:")
         item = self.create_menu_item("Trash", "user-trash")
-
-        # Trash submenu
-        trash_menu = Gtk.Menu()
-        item.set_submenu(trash_menu)
-        open_trash_menu =  self.create_menu_item("Open Trash", "document-open")
-        trash_menu.append(open_trash_menu);            
-        open_trash_menu.connect("activate", self.on_bookmark_click, 'trash:')
-        empty_trash_menu = self.create_menu_item("Empty Trash", None)
-        trash_menu.append(empty_trash_menu)
-        empty_trash_menu.connect("activate", self.empty_trash)
+        item.connect("activate", self.on_bookmark_click, 'trash:')
         
         trash_items = trash.query_info(Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
                                        Gio.FileQueryInfoFlags.NONE, None).get_attribute_uint32(
@@ -149,10 +145,7 @@ class IndicatorPlaces:
             image = Gtk.Image()
             image.set_from_icon_name("user-trash-full", Gtk.IconSize.MENU)
             item.set_image(image)
-            empty_trash_menu.set_sensitive(True)
-        else:
-            empty_trash_menu.set_sensitive(False)
-            
+               
         menu.append(item)
 
         # Show separator
@@ -191,16 +184,19 @@ class IndicatorPlaces:
 
         # Mounts
         connected_drives = self.volume_monitor.get_connected_drives()
+        mounts = self.volume_monitor.get_mounts()
         counter = 0
+        mounts_list = []
         for drive in connected_drives:
-            if drive.is_media_removable:
-                for volume in drive.get_volumes():
+            for volume in drive.get_volumes():
+                if volume.can_eject or volume.can_mount:
                     counter += 1
                     if counter == 1:
                         # Show separator
                         item = Gtk.SeparatorMenuItem()
                         menu.append(item)
-                    item = self.create_menu_item(volume.get_name(), self._get_icon_name_from_gicon(volume.get_icon()))
+                    vol_name = volume.get_name()
+                    item = self.create_menu_item(vol_name, self._get_icon_name_from_gicon(volume.get_icon()))
                     menu.append(item)
                     # Open submenu
                     submenu = Gtk.Menu()
@@ -208,14 +204,20 @@ class IndicatorPlaces:
                     open_menu =  self.create_menu_item("Open", "document-open")
                     open_menu.connect('activate', self.on_removible_media_click, volume)
                     submenu.append(open_menu)
-                    if volume.get_mount():
-                        open_menu.set_sensitive(False)
-                    else:
-                        open_menu.set_sensitive(True)
-
-                    # item.connect('activate', self.mount.eject, i)
+                    mounts_list.append(vol_name)
                     
-                
+        for mount in mounts:
+            if mount.can_unmount:
+                if not (mount.get_name() in mounts_list):
+                    counter += 1
+                    if counter == 1:
+                        # Show separator
+                        item = Gtk.SeparatorMenuItem()
+                        menu.append(item)
+                    item = self.create_menu_item(mount.get_name(), self._get_icon_name_from_gicon(mount.get_icon()))
+                    item.connect('activate', self.on_bookmark_click, mount.get_root().get_path())
+                    menu.append(item)
+                 
         # Show the menu
         menu.show_all()
 
@@ -224,11 +226,14 @@ class IndicatorPlaces:
         subprocess.Popen(self.FM + ' %s' % path, shell = True)
 
     def on_removible_media_click_cb(self, task, result, volume):
-        if volume.mount_finish(result):
-            mount = volume.get_mount()
-            path = mount.get_root().get_path()
-            subprocess.Popen(self.FM + ' %s' % path, shell = True)
-            self.update_menu()
+        try:
+            volume.mount_finish(result)
+        except GLib.Error:
+            None
+        mount = volume.get_mount()
+        path = mount.get_root().get_path()
+        subprocess.Popen(self.FM + ' %s' % path, shell = True)
+        self.update_menu()
 
     def on_removible_media_click(self, widget, volume):
         volume.mount(Gio.MountMountFlags.NONE, None, None, self.on_removible_media_click_cb, volume)
