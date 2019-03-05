@@ -11,9 +11,11 @@ import gi
 
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
+gi.require_version('Notify', '0.7')
 
 from gi.repository import Gtk, Gio, GLib
 from gi.repository import AppIndicator3 as AppIndicator
+from gi.repository import Notify
 
 import os
 import signal
@@ -167,11 +169,19 @@ class IndicatorPlaces:
                     menu.append(item)
                     # Open submenu
                     submenu = Gtk.Menu()
-                    item.set_submenu(submenu)
-                    open_menu =  self.create_menu_item("Open", "document-open")
-                    open_menu.connect('activate', self.on_removible_media_click, volume)
-                    submenu.append(open_menu)
+                    open_submenu_item =  self.create_menu_item("Open", "document-open")
+                    open_submenu_item.connect('activate', self.on_removible_media_click, volume)
+                    submenu.append(open_submenu_item)
                     mounts_list.append(vol_name)
+                    # Unmount submenu
+                    unmount_submenu_item =  self.create_menu_item("Unmount", "media-eject")
+                    unmount_submenu_item.connect('activate', self.unmount, volume.get_mount())
+                    submenu.append(unmount_submenu_item)
+                    item.set_submenu(submenu)
+                    if volume.get_mount():
+                        unmount_submenu_item.set_sensitive(True)
+                    else:
+                        unmount_submenu_item.set_sensitive(False)
 
         # Remote mounts, fuse folders ...
         for mount in mounts:
@@ -259,6 +269,43 @@ class IndicatorPlaces:
             
     def empty_trash(self, widget):
         os.system("gio trash --empty")
+
+    def _unmount_cb(self, m, result, t):
+        unmounted = False
+        try:
+            unmounted = m.unmount_finish(result)
+        except:
+            unmounted = False
+        if unmounted:
+            self.show_message(m, 0)
+        else:
+            self.show_message(m, 1)
+        self.update_menu()
+
+    def unmount(self, s, m):
+        if self.dev_status(m) == 0:
+            m.unmount(Gio.MountUnmountFlags.NONE, None, self._unmount_cb, None)
+        else:
+            self.show_message(m, 1)
+
+    def dev_status(self, m):
+        try:
+            dev_full = str(m.get_volume().get_identifier("unix-device"))
+            dev_split = dev_full.split("/", 2)
+            dev = dev_split[2]
+            dev_status = int(subprocess.getoutput("awk '{ print $9 }' /sys/block/" + dev + "/stat"))
+        except:
+            dev_status = 1
+        return dev_status
+
+    def show_message(self, m, status):
+        Notify.init('indicator-places')
+        if status == 0:
+            message = "Device can be removed now"
+        else:
+            message = "Device is busy, can not be removed"
+        n = Notify.Notification.new(message, m.get_name(), self._get_icon_name_from_gicon(m.get_icon()))
+        n.show()
 
 if __name__ == "__main__":
     # Run the indicator
