@@ -1,0 +1,74 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-04 23:36-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../indicator-places:98
+msgid "Home Folder"
+msgstr ""
+
+#: ../indicator-places:103
+msgid "Desktop"
+msgstr ""
+
+#: ../indicator-places:109
+msgid "Documents"
+msgstr ""
+
+#: ../indicator-places:114
+msgid "Downloads"
+msgstr ""
+
+#: ../indicator-places:119
+msgid "Pictures"
+msgstr ""
+
+#: ../indicator-places:124
+msgid "Music"
+msgstr ""
+
+#: ../indicator-places:129
+msgid "Videos"
+msgstr ""
+
+#: ../indicator-places:179
+msgid "Open"
+msgstr ""
+
+#: ../indicator-places:184
+msgid "Unmount"
+msgstr ""
+
+#: ../indicator-places:216
+msgid "Trash"
+msgstr ""
+
+#: ../indicator-places:234
+msgid "Computer"
+msgstr ""
+
+#: ../indicator-places:239
+msgid "Network"
+msgstr ""
+
+#: ../indicator-places:311
+msgid "Device can be removed now"
+msgstr ""
+
+#: ../indicator-places:313
+msgid "Device is busy, can not be removed"
+msgstr ""

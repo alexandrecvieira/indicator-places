@@ -21,6 +21,13 @@ import os
 import signal
 import subprocess
 from urllib.parse import unquote
+import gettext
+
+_ = gettext.gettext
+
+gettext.install("indicator-places", "/usr/share/locale")
+gettext.bindtextdomain("indicator-places", "/usr/share/locale")
+gettext.textdomain("indicator-places")
 
 APP_NAME = 'indicator-places'
 APP_VERSION = '1.0'
@@ -88,38 +95,38 @@ class IndicatorPlaces:
 
     def create_default_home_items(self, menu):
         # Home folder menu item
-        item = self.create_menu_item("Home Folder", "user-home")
+        item = self.create_menu_item(_("Home Folder"), "user-home")
         item.connect("activate", self.on_bookmark_click, os.getenv('HOME'))
         menu.append(item)
 
         # Desktop folder menu item
-        item = self.create_menu_item("Desktop", "desktop")
+        item = self.create_menu_item(_("Desktop"), "desktop")
         path = str(GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP)).replace(' ', '\\ ')
         item.connect("activate", self.on_bookmark_click, path)
         menu.append(item)
 
         # Documents folder menu item
-        item = self.create_menu_item("Documents", "folder-documents")
+        item = self.create_menu_item(_("Documents"), "folder-documents")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS))
         menu.append(item)
 
         # Downloads folder menu item
-        item = self.create_menu_item("Downloads", "folder-download")
+        item = self.create_menu_item(_("Downloads"), "folder-download")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
         menu.append(item)
 
         # Pictures folder menu item
-        item = self.create_menu_item("Pictures", "folder-pictures")
+        item = self.create_menu_item(_("Pictures"), "folder-pictures")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES))
         menu.append(item)
 
         # Music folder menu item
-        item = self.create_menu_item("Music", "folder-music")
+        item = self.create_menu_item(_("Music"), "folder-music")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_MUSIC))
         menu.append(item)
 
         # Videos folder menu item
-        item = self.create_menu_item("Videos", "folder-video")
+        item = self.create_menu_item(_("Videos"), "folder-video")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS))
         menu.append(item)
 
@@ -169,12 +176,12 @@ class IndicatorPlaces:
                     menu.append(item)
                     # Open submenu
                     submenu = Gtk.Menu()
-                    open_submenu_item =  self.create_menu_item("Open", "document-open")
+                    open_submenu_item =  self.create_menu_item(_("Open"), "document-open")
                     open_submenu_item.connect('activate', self.on_removible_media_click, volume)
                     submenu.append(open_submenu_item)
                     mounts_list.append(vol_name)
                     # Unmount submenu
-                    unmount_submenu_item =  self.create_menu_item("Unmount", "media-eject")
+                    unmount_submenu_item =  self.create_menu_item(_("Unmount"), "media-eject")
                     unmount_submenu_item.connect('activate', self.unmount, volume.get_mount())
                     submenu.append(unmount_submenu_item)
                     item.set_submenu(submenu)
@@ -206,7 +213,7 @@ class IndicatorPlaces:
 
         # Trash
         trash = Gio.File.new_for_uri("trash:")
-        item = self.create_menu_item("Trash", "user-trash")
+        item = self.create_menu_item(_("Trash"), "user-trash")
         item.connect("activate", self.on_bookmark_click, 'trash:')
         
         trash_items = trash.query_info(Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
@@ -224,12 +231,12 @@ class IndicatorPlaces:
         menu.append(item)
 
         # Computer menu item
-        item = self.create_menu_item("Computer", "computer" )
+        item = self.create_menu_item(_("Computer"), "computer" )
         item.connect("activate", self.on_bookmark_click, 'computer:')
         menu.append(item)
 
         # Computer menu item
-        item = self.create_menu_item("Network", "network-workgroup")
+        item = self.create_menu_item(_("Network"), "network-workgroup")
         item.connect("activate", self.on_bookmark_click, 'network:')
         menu.append(item)
 
@@ -301,9 +308,9 @@ class IndicatorPlaces:
     def show_message(self, m, status):
         Notify.init('indicator-places')
         if status == 0:
-            message = "Device can be removed now"
+            message = _("Device can be removed now")
         else:
-            message = "Device is busy, can not be removed"
+            message = _("Device is busy, can not be removed")
         n = Notify.Notification.new(message, m.get_name(), self._get_icon_name_from_gicon(m.get_icon()))
         n.show()
 
