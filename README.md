@@ -12,6 +12,8 @@ Modificado para elementaryOS por: http://entornosgnulinux.com/
 
 Modificado para stalonetray no Openbox por: http://alexandrecvieira.droppages.com
 
+<img src="http://alexandrecvieira.droppages.com/images/indicator-places.png">
+
 #### Requerimentos
 
 	sudo apt install stalonetray python3-gi gir1.2-appindicator3-0.1 python-appindicator python-gobject python-gobject-2 python-distutils-extra
