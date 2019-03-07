@@ -1,0 +1,45 @@
+
+2019-03-07  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* README Update
+
+2019-03-05  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* README Update
+	* README Update
+	* README Update
+
+2019-03-04  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* setup.py e tradução
+	* menu eject para midias removíveis
+	* reorganização da criação dos items em métodos separados
+	* funcionalidade de abrir drives removíveis e pastas remotas montadas localmente completada
+	* drives removíveis
+
+2019-03-02  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* make empty menu insensitive if Trash empty
+	* Trash menu e reordenação das pastas
+	* incluídas todas as outras pastas da Home(Documents, Downloads ...)
+
+2019-03-01  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* script de instalação
+
+2019-02-28  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* tracking  trash changes
+
+2019-02-27  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* file manager setado de acordo com o sistema e tentativa de contar arquivos na lixeira
+
+2019-02-14  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* problemas para mostrar bookmarks solucionado
+
+2019-02-12  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* Readme
+	* Start...
