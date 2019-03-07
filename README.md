@@ -2,8 +2,6 @@
 
 Menu muito simples feito apenas pra suprir a necessidade do usuário acessar rapidamente as pastas da Home
 
-A instalação é muito simples também e exclusivamente para o Openbox puro
-
 Very simple app-indicator, shows gtk-bookmarks (aka places)
 
 Author: Alex Simenduev <shamil.si@gmail.com>
@@ -25,4 +23,6 @@ Portado para **python3** e modificado para stalonetray no Openbox por: http://al
 	cd indicator-places
 	python3 setup.py build
     python3 setup.py install --prefix=/usr
+	
+	# Configurar para iniciar automaticamente no Openbox
 	echo "indicator-places &" >> $HOME/.config/openbox/autostart
