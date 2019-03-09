@@ -22,7 +22,7 @@ Portado para **python3** e modificado para stalonetray no Openbox por: http://al
 	git clone https://github.com/alexandrecvieira/indicator-places.git
 	cd indicator-places
 	python3 setup.py build
-    python3 setup.py install --prefix=/usr
+    sudo python3 setup.py install --prefix=/usr
 	
 	# Configurar para iniciar automaticamente no Openbox
 	echo "indicator-places &" >> $HOME/.config/openbox/autostart
