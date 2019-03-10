@@ -163,7 +163,7 @@ class IndicatorPlaces:
         mounts = self.volume_monitor.get_mounts()
         counter = 0
         mounts_list = []
-        for drive in connected_drives:
+        for drive in connected_drives:            
             for volume in drive.get_volumes():
                 if volume.can_eject or volume.can_mount:
                     counter += 1
@@ -174,21 +174,28 @@ class IndicatorPlaces:
                     vol_name = volume.get_name()
                     item = self.create_menu_item(vol_name, self._get_icon_name_from_gicon(volume.get_icon()))
                     menu.append(item)
+
                     # Open submenu
                     submenu = Gtk.Menu()
+                    item.set_submenu(submenu)
                     open_submenu_item =  self.create_menu_item(_("Open"), "document-open")
                     open_submenu_item.connect('activate', self.on_removible_media_click, volume)
                     submenu.append(open_submenu_item)
                     mounts_list.append(vol_name)
-                    # Unmount submenu
-                    unmount_submenu_item =  self.create_menu_item(_("Unmount"), "media-eject")
-                    unmount_submenu_item.connect('activate', self.unmount, volume.get_mount())
-                    submenu.append(unmount_submenu_item)
-                    item.set_submenu(submenu)
+
                     if volume.get_mount():
-                        unmount_submenu_item.set_sensitive(True)
-                    else:
-                        unmount_submenu_item.set_sensitive(False)
+                        if volume.get_mount().get_root().get_basename().find("cdrom") == 0:
+                            # Eject submenu
+                            eject_submenu_item =  self.create_menu_item(_("Eject"), "media-eject")
+                            eject_submenu_item.set_name("eject")
+                            eject_submenu_item.connect('activate', self.unmount, drive)
+                            submenu.append(eject_submenu_item)
+                        else:
+                            # Unmount submenu
+                            unmount_submenu_item =  self.create_menu_item(_("Unmount"), "media-eject")
+                            unmount_submenu_item.set_name("unmount")
+                            unmount_submenu_item.connect('activate', self.unmount, volume.get_mount())
+                            submenu.append(unmount_submenu_item)
 
         # Remote mounts, fuse folders ...
         for mount in mounts:
@@ -280,7 +287,10 @@ class IndicatorPlaces:
     def _unmount_cb(self, m, result, t):
         unmounted = False
         try:
-            unmounted = m.unmount_finish(result)
+            if t == "unmount":
+                unmounted = m.unmount_finish(result)
+            if t == "eject":
+                unmounted = m.eject_finish(result)
         except:
             unmounted = False
         if unmounted:
@@ -290,10 +300,13 @@ class IndicatorPlaces:
         self.update_menu()
 
     def unmount(self, s, m):
-        if self.dev_status(m) == 0:
-            m.unmount(Gio.MountUnmountFlags.NONE, None, self._unmount_cb, None)
-        else:
-            self.show_message(m, 1)
+        if s.get_name() == "unmount":
+            if self.dev_status(m) == 0:
+                m.unmount(Gio.MountUnmountFlags.NONE, None, self._unmount_cb, "unmount")
+            else:
+                self.show_message(m, 1)
+        if s.get_name() == "eject":
+                m.eject(Gio.MountUnmountFlags.NONE, None, self._unmount_cb, "eject")
 
     def dev_status(self, m):
         try:

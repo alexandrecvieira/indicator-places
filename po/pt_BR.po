@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: 1.0.0\n"
 "Report-Msgid-Bugs-To: acamargo.vieira@gmail.com\n"
 "POT-Creation-Date: 2019-03-04 22:49-0300\n"
-"PO-Revision-Date: 2019-03-04 23:00-0300\n"
+"PO-Revision-Date: 2019-03-10 19:00-0300\n"
 "Last-Translator: Alexandre C Vieira <acamargo.vieira@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <acamargo.vieira@gmail.com>\n"
 "Language: pt_BR\n"
@@ -19,67 +19,71 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Home folder menu item
-#: ../indicator-places.py:98
+#: ../indicator-places:98
 msgid "Home Folder"
 msgstr "Pasta pessoal"
 
 #. Desktop folder menu item
-#: ../indicator-places.py:103
+#: ../indicator-places:103
 msgid "Desktop"
 msgstr "Área de trabalho"
 
 #. Documents folder menu item
-#: ../indicator-places.py:109
+#: ../indicator-places:109
 msgid "Documents"
 msgstr "Documentos"
 
 #. Downloads folder menu item
-#: ../indicator-places.py:114
+#: ../indicator-places:114
 msgid "Downloads"
 msgstr "Downloads"
 
 #. Pictures folder menu item
-#: ../indicator-places.py:119
+#: ../indicator-places:119
 msgid "Pictures"
 msgstr "Imagens"
 
 #. Music folder menu item
-#: ../indicator-places.py:124
+#: ../indicator-places:124
 msgid "Music"
 msgstr "Música"
 
 #. Videos folder menu item
-#: ../indicator-places.py:129
+#: ../indicator-places:129
 msgid "Videos"
 msgstr "Vídeos"
 
-#: ../indicator-places.py:179
+#: ../indicator-places:181
 msgid "Open"
 msgstr "Abrir"
 
+#: ../indicator-places:189
+msgid "Eject"
+msgstr "Ejetar"
+
 #. Unmount submenu
-#: ../indicator-places.py:184
+#: ../indicator-places:195
 msgid "Unmount"
 msgstr "Desmontar"
 
-#: ../indicator-places.py:216
+#: ../indicator-places:223
 msgid "Trash"
 msgstr "Lixeira"
 
 #. Computer menu item
-#: ../indicator-places.py:234
+#: ../indicator-places:241
 msgid "Computer"
 msgstr "Computador"
 
 #. Computer menu item
-#: ../indicator-places.py:239
+#: ../indicator-places:246
 msgid "Network"
 msgstr "Rede"
 
-#: ../indicator-places.py:311
+#: ../indicator-places:324
 msgid "Device can be removed now"
 msgstr "O dispositivo pode ser removido"
 
-#: ../indicator-places.py:313
+#: ../indicator-places:326
 msgid "Device is busy, can not be removed"
 msgstr "O dispositivo está ocupado, não pode ser removido"

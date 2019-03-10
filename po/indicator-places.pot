@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-04 23:36-0300\n"
+"POT-Creation-Date: 2019-03-10 19:09-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,30 +45,34 @@ msgstr ""
 msgid "Videos"
 msgstr ""
 
-#: ../indicator-places:179
+#: ../indicator-places:181
 msgid "Open"
 msgstr ""
 
-#: ../indicator-places:184
+#: ../indicator-places:189
+msgid "Eject"
+msgstr ""
+
+#: ../indicator-places:195
 msgid "Unmount"
 msgstr ""
 
-#: ../indicator-places:216
+#: ../indicator-places:223
 msgid "Trash"
 msgstr ""
 
-#: ../indicator-places:234
+#: ../indicator-places:241
 msgid "Computer"
 msgstr ""
 
-#: ../indicator-places:239
+#: ../indicator-places:246
 msgid "Network"
 msgstr ""
 
-#: ../indicator-places:311
+#: ../indicator-places:324
 msgid "Device can be removed now"
 msgstr ""
 
-#: ../indicator-places:313
+#: ../indicator-places:326
 msgid "Device is busy, can not be removed"
 msgstr ""
