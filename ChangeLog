@@ -1,4 +1,8 @@
 
+2019-03-10  Alexandre C Vieira <acamargo.vieira@gmail.com>
+
+	* indicator-places (create_removible_media_items): New cdrom eject feature
+
 2019-03-08  Alexandre C Vieira <acamargo.vieira@gmail.com>
 
 	* README Update
