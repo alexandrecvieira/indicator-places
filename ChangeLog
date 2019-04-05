@@ -3,20 +3,6 @@
 
 	* indicator-places (create_removible_media_items): New cdrom eject feature
 
-2019-03-08  Alexandre C Vieira <acamargo.vieira@gmail.com>
-
-	* README Update
-
-2019-03-07  Alexandre C Vieira <acamargo.vieira@gmail.com>
-
-	* README Update
-
-2019-03-05  Alexandre C Vieira <acamargo.vieira@gmail.com>
-
-	* README Update
-	* README Update
-	* README Update
-
 2019-03-04  Alexandre C Vieira <acamargo.vieira@gmail.com>
 
 	* setup.py e tradução
@@ -49,5 +35,4 @@
 
 2019-02-12  Alexandre C Vieira <acamargo.vieira@gmail.com>
 
-	* Readme
 	* Start...
