@@ -100,7 +100,7 @@ class IndicatorPlaces:
         menu.append(item)
 
         # Desktop folder menu item
-        item = self.create_menu_item(_("Desktop"), "desktop")
+        item = self.create_menu_item(_("Desktop"), "user-desktop")
         path = str(GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DESKTOP)).replace(' ', '\\ ')
         item.connect("activate", self.on_bookmark_click, path)
         menu.append(item)
