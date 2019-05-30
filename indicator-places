@@ -126,7 +126,7 @@ class IndicatorPlaces:
         menu.append(item)
 
         # Videos folder menu item
-        item = self.create_menu_item(_("Videos"), "folder-video")
+        item = self.create_menu_item(_("Videos"), "folder-videos")
         item.connect("activate", self.on_bookmark_click, GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS))
         menu.append(item)
 

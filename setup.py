@@ -5,9 +5,6 @@ import glob
 import os
 from DistUtilsExtra.command import *
 
-
-
-
 setup(name='indicator-places',
       version='1.0.0',
       description='Simple indicator places for Stalonetray/Openbox',
