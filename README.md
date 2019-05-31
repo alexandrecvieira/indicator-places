@@ -10,7 +10,7 @@ Modificado para elementaryOS por: http://entornosgnulinux.com/
 
 Portado para **python3** e modificado para stalonetray no Openbox por: http://alexandrecvieira.droppages.com
 
-<img src="http://alexandrecvieira.droppages.com/images/indicator-places.png">
+<img src="http://alexandrecvieira.droppages.com/images/indicator-places/indicator-places.png">
 
 #### Requerimentos
 
