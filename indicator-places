@@ -313,7 +313,7 @@ class IndicatorPlaces:
             dev_full = str(m.get_volume().get_identifier("unix-device"))
             dev_split = dev_full.split("/", 2)
             dev = dev_split[2]
-            dev_status = int(subprocess.getoutput("awk '{ print $9 }' /sys/block/" + dev + "/stat"))
+            dev_status = int(subprocess.getoutput("awk '{ print $9 }' /sys/block/" + dev[:3] + "/" + dev + "/stat"))
         except:
             dev_status = 1
         return dev_status
